@@ -1,0 +1,52 @@
+=========================================================================
+ META APP BACKGROUND BAN  -  Instagram + Threads
+ packages : com.instagram.android
+            com.instagram.barcelona   (Threads)
+ date     : 2026-10-04
+ policy   : keep user-launchable, but NO background activity ever
+=========================================================================
+WHAT THEY WERE DOING (why they messed with your background):
+ - HeroKeepAliveService .................. kept the media/video process alive
+                                           (a "keep-alive" that resists death)
+ - IgBgFetchTaskLifeService + WorkManager  repeated background fetch jobs
+                                           (SystemJobService fired every ~7-15s)
+ - IgPushRegistrationService ............. re-registered push constantly
+ - Broadcast receivers ................... reagistered to events to wake itself
+ - Net effect: process stayed resident, thrashed swap (35k+ major page faults),
+   pinned ~1-2 CPU cores OFF-SCREEN, held wake locks and burned heat.
+=========================================================================
+WHAT WE DID (verified on device)
+=========================================================================
+ [pm]     force-stop com.instagram.android   -> STOPPED
+ [pm]     force-stop com.instagram.barcelona -> STOPPED
+ [appops] RUN_IN_BACKGROUND      deny  (both)
+ [appops] RUN_ANY_IN_BACKGROUND  deny  (both)
+ [appops] WAKE_LOCK              deny  (both)
+ [appops] START_FOREGROUND       deny  (both)
+ [standby] bucket -> restricted = 45 (both)
+ [doze]   deviceidle whitelist removed / absent (both)
+ [log]    cpuinfo/top confirms processes no longer present
+=========================================================================
+WHAT THEY WON'T DO AGAIN
+=========================================================================
+ * No spawning background jobs / push re-registration / bg fetch.
+ * No holding wake locks -> no keeping CPU/storage awake.
+ * No starting foreground services on their own.
+ * No surviving as a resident cached process to thrash swap.
+ * -> less IO, less load, less HEAT, slower battery drain.
+ STILL POSSIBLE (by design):
+ * You CAN still launch them manually -> they run while on screen.
+ * They die / stay frozen when you leave them (restricted bucket).
+=========================================================================
+TO RE-ENABLE BACKGROUND LATER (if ever wanted):
+   cmd appops set com.instagram.android RUN_IN_BACKGROUND allow
+   cmd appops set com.instagram.android RUN_ANY_IN_BACKGROUND allow
+   cmd appops set com.instagram.android WAKE_LOCK allow
+   cmd appops set com.instagram.android START_FOREGROUND allow
+   cmd appops set com.instagram.barcelona RUN_IN_BACKGROUND allow
+   cmd appops set com.instagram.barcelona RUN_ANY_IN_BACKGROUND allow
+   cmd appops set com.instagram.barcelona WAKE_LOCK allow
+   cmd appops set com.instagram.barcelona START_FOREGROUND allow
+   am set-standby-bucket com.instagram.android active
+   am set-standby-bucket com.instagram.barcelona active
+=========================================================================

@@ -1,0 +1,27 @@
+###############################################################
+# APPLOVIN ARRAY APP HUB  -  BACKGROUND BAN LOG
+# package : com.applovin.array.apphub.vincere
+# platform: AppLovin Array (OEM adware / realme "AppHub")
+# codePath: /system_ext/priv-app/realme/AppHub
+# action  : HARD BAN (non-root, per-user 0)
+# date    : 2026-10-04
+###############################################################
+[appops]  RUN_IN_BACKGROUND      -> deny
+[appops]  RUN_ANY_IN_BACKGROUND  -> deny
+[appops]  WAKE_LOCK              -> deny
+[appops]  START_FOREGROUND       -> deny
+[doze]    deviceidle whitelist   -> REMOVED
+[standby] bucket                -> restricted (45)
+[pm]      disable-user --user 0  -> disabled-user
+[am]      force-stop             -> STOPPED
+# launcher icon: NONE (no MAIN/LAUNCHER activity -> headless)
+###############################################################
+# TO RE-ENABLE / REACTIVATE LATER:
+#   pm enable com.applovin.array.apphub.vincere
+#   cmd appops set com.applovin.array.apphub.vincere RUN_IN_BACKGROUND allow
+#   cmd appops set com.applovin.array.apphub.vincere RUN_ANY_IN_BACKGROUND allow
+#   cmd appops set com.applovin.array.apphub.vincere WAKE_LOCK allow
+#   cmd appops set com.applovin.array.apphub.vincere START_FOREGROUND allow
+#   cmd deviceidle whitelist +com.applovin.array.apphub.vincere
+#   am set-standby-bucket com.applovin.array.apphub.vincere active
+###############################################################

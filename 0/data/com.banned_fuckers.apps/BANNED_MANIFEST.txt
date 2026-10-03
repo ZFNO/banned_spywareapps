@@ -1,0 +1,13 @@
+BANNED APPS ARCHIVE  (com.banned_fuckers.apps)
+==============================================================
+  run_all.sh                -> applies all bans below
+  applovin/  ban_applovin.sh    com.applovin.array.apphub.vincere  (HARD BAN)
+  instagram/ ban_instagram.sh   com.instagram.android + .barcelona  (bg ban)
+  meta/      ban_facebook.sh    com.facebook.katana                 (bg ban)
+             ban_messenger.sh   com.facebook.orca                  (OPT-IN)
+  tiktok/    ban_tiktok.sh      com.zhiliaoapp.musically.go         (bg ban)
+             kill_tiktok.sh / watch_tiktok*.sh  (full terminate on exit)
+All scripts: POSIX sh, LF endings, 755, best-effort (skip on failure).
+Created: 2026-10-04
+==============================================================
+To add another app, read ADDING_AN_APP.md
